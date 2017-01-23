@@ -64,6 +64,7 @@
 
 		this.updatePanels = (pages) => {
 			//console.log(this.parent);
+			this.parent.updatePanels(pages);
 		};
 
 	</script>
