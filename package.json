@@ -1,0 +1,15 @@
+{
+  "name": "have-you-been-here",
+  "version": "1.0.0",
+  "description": "Find interesting places nearby",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Slawa",
+  "license": "ISC",
+  "dependencies": {
+    "mdbootstrap": "^4.2.0",
+    "riot": "^3.0.7"
+  }
+}
