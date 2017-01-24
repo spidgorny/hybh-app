@@ -3,7 +3,7 @@
 
 		<!--Card image-->
 		<div class="view overlay hm-white-slight">
-			<img src="http://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(13).jpg" class="img-fluid" alt="">
+			<img src="{ data.thumbnail ? data.thumbnail.source : '' }" class="img-fluid" alt="">
 			<a href="#!">
 				<div class="mask"></div>
 			</a>
@@ -13,9 +13,13 @@
 		<!--Card content-->
 		<div class="card-block">
 			<!--Title-->
-			<h4 class="card-title">Card title</h4>
+			<h4 class="card-title">
+				<div style="float: right"> { distance || '?' } km</div>
+				{ data.title }
+			</h4>
 			<!--Text-->
-			<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+			<p class="card-text">
+				{ data.terms ? data.terms.description : ''}</p>
 			<div class="read-more">
 				<a href="#!" class="btn btn-primary">Read more</a>
 			</div>
@@ -24,4 +28,21 @@
 
 	</div>
 	<!--/.Card-->
+
+	<script>
+		const LatLon = require('mt-latlon');
+
+		this.data = this.opts.data;
+		this.gps = new LatLon(this.opts.lat, this.opts.lon);
+
+		if (this.gps) {
+			let coordinates = this.data.coordinates[0];
+			let point = new LatLon(coordinates.lat, coordinates.lon);
+			this.distance = point.distanceTo(this.gps);
+		}
+
+		console.log(this);
+
+	</script>
+
 </card>

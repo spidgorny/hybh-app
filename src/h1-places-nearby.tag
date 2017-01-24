@@ -12,15 +12,18 @@
 	<!--/.Page heading-->
 
 	<script>
-		this.getWikipediaURL = () => {
-			return 'https://en.wikipedia.org/w/api.php?action=query&prop=coordinates%7Cpageimages%7Cpageterms&colimit=50&piprop=thumbnail&pithumbsize=144&pilimit=50&wbptterms=description&generator=geosearch&ggscoord='+this.lat+'%7C'+this.lon+'&ggsradius=1000&ggslimit=50&format=json&origin=*';
-			//+encodeURIComponent('http://localhost:8081');
-		};
+		const LatLon = require('mt-latlon');
+		const gl = require('./GMaps.geolocate.js');
 
 		this.lat = null;
 		this.lon = null;
 
 		//console.log(this);
+
+		this.getWikipediaURL = () => {
+			return 'https://en.wikipedia.org/w/api.php?action=query&prop=coordinates%7Cpageimages%7Cpageterms%7Cdistance&colimit=50&piprop=thumbnail&pithumbsize=708&pilimit=50&wbptterms=description&generator=geosearch&ggscoord='+this.lat+'%7C'+this.lon+'&ggsradius=1000&ggslimit=50&format=json&origin=*';
+			//+encodeURIComponent('http://localhost:8081');
+		};
 
 		this.on('mount', () => {
 			//console.log('mounted');
@@ -36,6 +39,7 @@
 			let wikipediaURL = this.getWikipediaURL();
 			//console.log(wikipediaURL);
 			this.fetchJSON(wikipediaURL);
+			this.parent.setGPS(new LatLon(this.lat, this.lon));
 			this.update();
 		};
 
