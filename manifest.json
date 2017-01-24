@@ -1,0 +1,14 @@
+{
+	"short_name": "Have You Been Here?",
+	"name": "Have You Been Here? Find interesting places nearby. See http://have-you-been-here.com/ for more details.",
+	"icons": [
+		{
+			"src": "img/map_blue.png",
+			"sizes": "180x180",
+			"type": "image/png"
+		}
+	],
+	"start_url": "index.html",
+	"display": "standalone",
+	"orientation": "portrait"
+}
