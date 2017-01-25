@@ -1,0 +1,7 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"moduleResolution": "browser"
+	},
+	"lib": ["es2016", "dom"]
+}

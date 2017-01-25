@@ -11,8 +11,11 @@
   "author": "Slawa",
   "license": "ISC",
   "dependencies": {
+    "jslint": "^0.10.3",
     "mdbootstrap": "^4.2.0",
     "mt-latlon": "^0.1.1",
+    "object-assign": "^4.1.1",
+    "redux": "^3.6.0",
     "riot": "^3.0.7",
     "riot-route": "^3.0.2",
     "riotify": "^2.0.0",

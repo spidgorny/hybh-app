@@ -2,6 +2,7 @@
   "name": "have-you-been-here",
   "dependencies": {},
   "globalDependencies": {
+    "node": "registry:dt/node#7.0.0+20170124134802",
     "service_worker_api": "registry:dt/service_worker_api#0.0.0+20170102221807"
   }
 }

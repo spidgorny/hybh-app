@@ -4,7 +4,7 @@
 		<!--Card image-->
 		<div class="view overlay hm-white-slight">
 			<img src="{ data.thumbnail ? data.thumbnail.source : '' }" class="img-fluid" alt="">
-			<a href="#!">
+			<a href="#details/{ data.pageid }">
 				<div class="mask"></div>
 			</a>
 		</div>
@@ -31,6 +31,7 @@
 
 	<script>
 		const LatLon = require('mt-latlon');
+		const store = require('./storeFactory').default;
 
 		this.data = this.opts.data;
 		this.gps = new LatLon(this.opts.lat, this.opts.lon);
