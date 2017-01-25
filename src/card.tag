@@ -21,7 +21,7 @@
 			<p class="card-text">
 				{ data.terms ? data.terms.description : ''}</p>
 			<div class="read-more">
-				<a href="#!" class="btn btn-primary">Read more</a>
+				<a href="#details/{ data.pageid }" class="btn btn-primary">Read more</a>
 			</div>
 		</div>
 		<!--/.Card content-->

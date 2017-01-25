@@ -14,6 +14,7 @@
     "mdbootstrap": "^4.2.0",
     "mt-latlon": "^0.1.1",
     "riot": "^3.0.7",
+    "riot-route": "^3.0.2",
     "riotify": "^2.0.0",
     "watchify": "^3.8.0"
   }

@@ -3,8 +3,25 @@ const hybh = require('./hybh.tag');
 const h1_places_nearby = require('./h1-places-nearby.tag');
 const panels = require('./panels.tag');
 const card = require('./card.tag');
+const about = require('./about.tag');
+const details = require('./details.tag');
+const route = require('riot-route');
 
-riot.mount('*');
+let r = route.create();
+r.stop();
+r('',        	() => {
+	console.warn('Page: hybh');
+	riot.mount('#app', 'hybh');
+});
+r('details/*',  (id) => {
+	console.warn('Page: details/'+id);
+	riot.mount('#app', 'details');
+});
+r('about',  	() => {
+	console.warn('Page: about');
+	riot.mount('#app', 'about');
+});
+route.start(true);
 
 global.shareMe = () => {
 	if (navigator.share) {
