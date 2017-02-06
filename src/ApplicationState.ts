@@ -13,7 +13,6 @@ export default class ApplicationState {
 
 	}
 
-
 	static manage(state = ApplicationState.initialState, action) {
 		console.warn(action);
 		switch (action.type) {

@@ -47,12 +47,12 @@ global.shareMe = () => {
 
 initializeServiceWorker(initialiseState);
 
-function initializeServiceWorker(callback) {
+function initializeServiceWorker(callback: Function) {
 	if ('serviceWorker' in navigator) {
 		console.log('service worker is supported');
 		window.addEventListener('load', function () {
 			console.log('registering sw');
-			navigator.serviceWorker.register('sw.js')
+			navigator.serviceWorker.register('sw.run.js')
 			.then(function (registration) {
 				// Registration was successful
 				console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -92,4 +92,3 @@ function initialiseState() {
 	}
 
 }
-// initialiseState();

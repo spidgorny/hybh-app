@@ -6,18 +6,25 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "browserify -t riotify src/app.js -o js/bundle.js",
-    "watch": "watchify -t riotify src/app.js -o js/bundle.js -v"
+    "watch": "watchify -t riotify src/app.js -o js/bundle.js -v",
+    "dl-sw": "curl https://gist.githubusercontent.com/ithinkihaveacat/227bfe8aa81328c5d64ec48f4e4df8e5/raw/f69f0783e69f5827b20dbe3f3509ddbf73933768/service-worker.d.ts -O typings/service-worker.d.ts",
+	  "watch-sw": "watchify sw.js -o sw.run.js -t [ babelify --presets [ es2015 ] ] -v"
   },
   "author": "Slawa",
   "license": "ISC",
   "dependencies": {
-    "jslint": "^0.10.3",
     "mdbootstrap": "^4.2.0",
     "mt-latlon": "^0.1.1",
     "object-assign": "^4.1.1",
     "redux": "^3.6.0",
     "riot": "^3.0.7",
-    "riot-route": "^3.0.2",
+    "riot-route": "^3.0.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-preset-es2015": "^6.22.0",
+    "babelify": "^7.3.0",
+    "jslint": "^0.10.3",
     "riotify": "^2.0.0",
     "watchify": "^3.8.0"
   }

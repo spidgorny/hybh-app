@@ -19,11 +19,11 @@ var ApplicationState = (function () {
         }
         return state;
     };
-    ApplicationState.initialState = {
-        placesNearby: [],
-        gps: null,
-    };
     return ApplicationState;
 }());
+ApplicationState.initialState = {
+    placesNearby: [],
+    gps: null,
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ApplicationState;

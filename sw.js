@@ -1,15 +1,23 @@
 /// <reference path="typings/index.d.ts" />
+/// <reference path="typings/service-worker.d.ts" />
 // https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
+"use strict";
+var LocationService_1 = require("./src/LocationService");
 var ServiceWorker = (function () {
-    function ServiceWorker() {
+    /**
+     * Self is a special SW context
+     * @param self
+     */
+    function ServiceWorker(self) {
         var _this = this;
         this.title = 'Have you been here?';
         this.CACHE_NAME = 'my-site-cache-v1';
         this.urlsToCache = [];
+        console.log('service worker constructor');
         self.addEventListener('install', function (event) {
             // Perform install steps
             console.log('service worker installed');
-            event.waitUntil(caches.open(this.CACHE_NAME)
+            event.waitUntil(caches.open(_this.CACHE_NAME)
                 .then(function (cache) {
                 console.log('Opened cache');
                 //return cache.addAll(this.urlsToCache);
@@ -18,6 +26,7 @@ var ServiceWorker = (function () {
         // auto cache everything
         // disabled for development
         self.addEventListener('no-fetch', this.cacheAllFetch.bind(this));
+        this.ls = new LocationService_1.default();
         self.addEventListener('activate', function (event) {
             console.log('activated');
             //this.notify();
@@ -53,6 +62,7 @@ var ServiceWorker = (function () {
         });
     };
     ServiceWorker.prototype.cacheAllFetch = function (event) {
+        var _this = this;
         event.respondWith(caches.match(event.request)
             .then(function (response) {
             // Cache hit - return response
@@ -74,7 +84,7 @@ var ServiceWorker = (function () {
                 // as well as the cache consuming the response, we need
                 // to clone it so we have two streams.
                 var responseToCache = response.clone();
-                caches.open(this.CACHE_NAME)
+                caches.open(_this.CACHE_NAME)
                     .then(function (cache) {
                     if (response.method == 'GET') {
                         cache.put(event.request, responseToCache);
@@ -86,7 +96,8 @@ var ServiceWorker = (function () {
     };
     ServiceWorker.prototype.periodicUpdater = function () {
         console.log('10000 seconds passed');
+        this.ls.start();
     };
     return ServiceWorker;
 }());
-new ServiceWorker();
+var sw = new ServiceWorker(self);
