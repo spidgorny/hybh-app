@@ -1814,38 +1814,42 @@ exports.default = GMaps;
 },{}],27:[function(require,module,exports){
 "use strict";
 
-var GMaps = require('./GMaps.geolocate.js');
-var LatLon = require('mt-latlon');
-var mt_latlon_1 = require("mt-latlon");
+var GMaps_geolocate_1 = require("./GMaps.geolocate");
+//import {LatLon} from 'mt-latlon';
+var LatLon = require("mt-latlon");
 var LocationService = function () {
+    //gmaps: GMaps;
     function LocationService() {
         this.store = require('./storeFactory').default;
+        console.log('store', this.store);
+        //this.gmaps = new GMaps();
     }
     LocationService.prototype.start = function () {
         console.log('start geolocation');
-        GMaps.geolocate({
-            success: this.geolocated
+        GMaps_geolocate_1.default.geolocate({
+            success: this.geolocated.bind(this),
+            not_supported: this.geoError.bind(this)
         });
     };
     LocationService.prototype.geolocated = function (pos) {
         console.log(pos);
         //			this.lat = pos.coords.latitude;
         //			this.lon = pos.coords.longitude;
-        var newLatLon = new mt_latlon_1.LatLon(pos.coords.latitude, pos.coords.longitude);
+        var newLatLon = new LatLon(pos.coords.latitude, pos.coords.longitude);
         this.store.dispatch({
             type: 'setGPS',
             latLon: newLatLon
         });
-        if (this.latLon != newLatLon) {
-            var wikipediaURL = this.getWikipediaURL();
+        if (this.latLon.lat() != newLatLon.lat() || this.latLon.lon() != newLatLon.lon()) {
+            var wikipediaURL = this.getWikipediaURL(newLatLon);
             //console.log(wikipediaURL);
             this.fetchJSON(wikipediaURL);
         } else {
             console.log('lat lon is the same');
         }
     };
-    LocationService.prototype.getWikipediaURL = function () {
-        return 'https://en.wikipedia.org/w/api.php?action=query&prop=coordinates%7Cpageimages%7Cpageterms%7Cdistance&colimit=50&piprop=thumbnail&pithumbsize=708&pilimit=50&wbptterms=description&generator=geosearch&ggscoord=' + this.latLon.lat() + '%7C' + this.latLon.lon() + '&ggsradius=1000&ggslimit=50&format=json&origin=*';
+    LocationService.prototype.getWikipediaURL = function (latLon) {
+        return 'https://en.wikipedia.org/w/api.php?action=query&prop=coordinates%7Cpageimages%7Cpageterms%7Cdistance&colimit=50&piprop=thumbnail&pithumbsize=708&pilimit=50&wbptterms=description&generator=geosearch&ggscoord=' + latLon.lat() + '%7C' + latLon.lon() + '&ggsradius=1000&ggslimit=50&format=json&origin=*';
         //+encodeURIComponent('http://localhost:8081');
     };
     LocationService.prototype.fetchJSON = function (url) {
@@ -1868,28 +1872,23 @@ var LocationService = function () {
             console.log(err);
         });
     };
+    LocationService.prototype.geoError = function () {
+        console.log('geolocation is not supported');
+    };
     return LocationService;
 }();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = LocationService;
 
-},{"./GMaps.geolocate.js":26,"./storeFactory":28,"mt-latlon":13}],28:[function(require,module,exports){
+},{"./GMaps.geolocate":26,"./storeFactory":29,"mt-latlon":13}],28:[function(require,module,exports){
 "use strict";
 
-var redux = require('redux');
-var ApplicationState_1 = require("./ApplicationState");
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = redux.createStore(function (state, action) {
-    return ApplicationState_1.default.manage(state, action);
-});
-
-},{"./ApplicationState":25,"redux":20}],29:[function(require,module,exports){
-/// <reference path="typings/index.d.ts" />
-/// <reference path="typings/service-worker.d.ts" />
-// https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
-"use strict";
-
-var LocationService_1 = require("./src/LocationService");
+var LocationService_1 = require("./LocationService");
+/**
+ * This was implemented in order to watch user's location
+ * even when the browser is closed. Since SW navigator object
+ * does not support GL - we don't need SW.
+ */
 var ServiceWorker = function () {
     /**
      * Self is a special SW context
@@ -1918,6 +1917,7 @@ var ServiceWorker = function () {
             //this.notify();
             setInterval(_this.periodicUpdater.bind(_this), 10000);
         });
+        this.periodicUpdater();
         self.addEventListener('push', function (event) {
             _this.notify();
             event.waitUntil(function () {
@@ -1981,6 +1981,26 @@ var ServiceWorker = function () {
     };
     return ServiceWorker;
 }();
-var sw = new ServiceWorker(self);
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = ServiceWorker;
 
-},{"./src/LocationService":27}]},{},[29]);
+},{"./LocationService":27}],29:[function(require,module,exports){
+"use strict";
+
+var redux = require('redux');
+var ApplicationState_1 = require("./ApplicationState");
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = redux.createStore(function (state, action) {
+    return ApplicationState_1.default.manage(state, action);
+});
+
+},{"./ApplicationState":25,"redux":20}],30:[function(require,module,exports){
+/// <reference path="typings/index.d.ts" />
+/// <reference path="typings/service-worker.d.ts" />
+// https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
+"use strict";
+
+var ServiceWorker_1 = require("./src/ServiceWorker");
+var sw = new ServiceWorker_1.default(self);
+
+},{"./src/ServiceWorker":28}]},{},[30]);

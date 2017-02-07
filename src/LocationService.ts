@@ -1,21 +1,26 @@
-const GMaps = require('./GMaps.geolocate.js');
-const LatLon = require('mt-latlon');
-import {LatLon} from 'mt-latlon';
+import GMaps from "./GMaps.geolocate";
+//import {LatLon} from 'mt-latlon';
+import LatLon = require('mt-latlon');
 
 export default class LocationService {
 
-	latLon: LatLon;
+	latLon: LatLon = new LatLon(0, 0);
 
 	store;
 
+	//gmaps: GMaps;
+
 	constructor() {
 		this.store = require('./storeFactory').default;
+		console.log('store', this.store);
+		//this.gmaps = new GMaps();
 	}
 
 	start() {
 		console.log('start geolocation');
 		GMaps.geolocate({
-			success: this.geolocated
+			success: this.geolocated.bind(this),
+			not_supported: this.geoError.bind(this),
 		});
 	}
 
@@ -25,22 +30,26 @@ export default class LocationService {
 //			this.lon = pos.coords.longitude;
 
 		const newLatLon = new LatLon(pos.coords.latitude, pos.coords.longitude);
-		this.store.dispatch({
-			type: 'setGPS',
-			latLon: newLatLon,
-		});
+		if (this.latLon.lat() != newLatLon.lat() ||
+			this.latLon.lon() != newLatLon.lon()) {
 
-		if (this.latLon != newLatLon) {
-			let wikipediaURL = this.getWikipediaURL();
+			this.store.dispatch({
+				type: 'setGPS',
+				latLon: newLatLon,
+			});
+
+			let wikipediaURL = this.getWikipediaURL(newLatLon);
 			//console.log(wikipediaURL);
 			this.fetchJSON(wikipediaURL);
+
+			this.latLon = newLatLon;
 		} else {
 			console.log('lat lon is the same');
 		}
 	}
 
-	getWikipediaURL() {
-		return 'https://en.wikipedia.org/w/api.php?action=query&prop=coordinates%7Cpageimages%7Cpageterms%7Cdistance&colimit=50&piprop=thumbnail&pithumbsize=708&pilimit=50&wbptterms=description&generator=geosearch&ggscoord='+this.latLon.lat()+'%7C'+this.latLon.lon()+'&ggsradius=1000&ggslimit=50&format=json&origin=*';
+	getWikipediaURL(latLon: LatLon) {
+		return 'https://en.wikipedia.org/w/api.php?action=query&prop=coordinates%7Cpageimages%7Cpageterms%7Cdistance&colimit=50&piprop=thumbnail&pithumbsize=708&pilimit=50&wbptterms=description&generator=geosearch&ggscoord='+latLon.lat()+'%7C'+latLon.lon()+'&ggsradius=1000&ggslimit=50&format=json&origin=*';
 		//+encodeURIComponent('http://localhost:8081');
 	}
 
@@ -68,6 +77,10 @@ export default class LocationService {
 			.catch(err => {
 				console.log(err);
 			});
+	}
+
+	geoError() {
+		console.log('geolocation is not supported');
 	}
 
 }

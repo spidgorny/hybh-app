@@ -2,6 +2,7 @@
   "name": "have-you-been-here",
   "dependencies": {},
   "globalDependencies": {
+    "chrome": "registry:dt/chrome#0.0.0+20170202164123",
     "node": "registry:dt/node#7.0.0+20170124134802",
     "service_worker_api": "registry:dt/service_worker_api#0.0.0+20170102221807",
     "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20161120230953"
