@@ -2,6 +2,10 @@
 
 const assign = Object.assign;
 
+const md5 = require('js-md5');
+
+import store = require('store');
+
 export default class ApplicationState {
 
 	static initialState = {
@@ -10,22 +14,42 @@ export default class ApplicationState {
 	};
 
 	constructor() {
-
+		let state = store.get('appState');
+		console.log('loaded state', state);
+		if (state) {
+			this.manage(state, {type: 'null'});
+		} else {
+			this.manage(ApplicationState.initialState, {type: 'null'});
+		}
 	}
 
-	static manage(state = ApplicationState.initialState, action) {
+	manage(state, action) {
 		console.warn(action);
 		switch (action.type) {
 			case 'setGPS':
-				return assign({}, state, {
+				state = assign({}, state, {
 					gps: action.latLon
 				});
+				break;
 			case 'setPlaces':
-				return assign({}, state, {
+				state = assign({}, state, {
 					placesNearby: action.places,
 				});
+				break;
+			default:
+				state = assign({}, state);
+				break;
 		}
+		this.saveState(state);
 		return state;
+	}
+
+	saveState(state) {
+		if (state) {
+			let stateHash = JSON.stringify(state);
+			console.log('saving state to appState', md5(stateHash));
+			store.set('appState', state);
+		}
 	}
 
 }

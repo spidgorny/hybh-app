@@ -4,6 +4,7 @@ var riot = require('riot');
 var route = require('riot-route');
 var HYBH = (function () {
     function HYBH() {
+        var _this = this;
         var r = route.create();
         r.stop();
         r('', function () {
@@ -12,7 +13,9 @@ var HYBH = (function () {
         });
         r('details/*', function (id) {
             console.warn('Page: details/' + id);
-            riot.mount('#app', 'details');
+            _this.currentPage = riot.mount('#app', 'details')[0];
+            _this.currentPage.setID(id);
+            //console.log(this.currentPage);
         });
         r('about', function () {
             console.warn('Page: about');
@@ -22,8 +25,8 @@ var HYBH = (function () {
         // not needed
         // this.initializeServiceWorker(this.initialiseState.bind(this));
         this.ls = new LocationService_1.default();
-        setInterval(this.periodicUpdater.bind(this), 10000);
-        this.periodicUpdater();
+        //setInterval(this.periodicUpdater.bind(this), 10000);
+        // this.periodicUpdater();
     }
     HYBH.prototype.periodicUpdater = function () {
         console.log('10000 milliseconds passed');

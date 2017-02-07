@@ -11,6 +11,8 @@ export default class HYBH {
 
 	ls: LocationService;
 
+	currentPage: any;
+
 	constructor() {
 		let r = route.create();
 		r.stop();
@@ -20,7 +22,9 @@ export default class HYBH {
 		});
 		r('details/*',  (id) => {
 			console.warn('Page: details/' + id);
-			riot.mount('#app', 'details');
+			this.currentPage = riot.mount('#app', 'details')[0];
+			this.currentPage.setID(id);
+			//console.log(this.currentPage);
 		});
 		r('about',  	() => {
 			console.warn('Page: about');
@@ -32,8 +36,8 @@ export default class HYBH {
 		// this.initializeServiceWorker(this.initialiseState.bind(this));
 
 		this.ls = new LocationService();
-		setInterval(this.periodicUpdater.bind(this), 10000);
-		this.periodicUpdater();
+		//setInterval(this.periodicUpdater.bind(this), 10000);
+		// this.periodicUpdater();
 	}
 
 	periodicUpdater() {

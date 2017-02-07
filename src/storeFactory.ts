@@ -2,7 +2,9 @@ const redux = require('redux');
 
 import ApplicationState from './ApplicationState';
 
-export default redux.createStore((state, action) => {
-	return ApplicationState.manage(state, action);
+let as = new ApplicationState();
+let normalStore = redux.createStore((state, action) => {
+	return as.manage(state, action);
 });
 
+export default normalStore;

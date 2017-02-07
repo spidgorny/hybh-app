@@ -15,6 +15,11 @@
 		//riot.observable(this);
 
 		const store = require('./storeFactory').default;
+//		const store2 = require('./storeFactory').default;
+//		console.log(store);
+//		console.log(store2);
+//		console.log(store === store2);
+		console.log(store.getState());
 
 		this.lat = null;
 		this.lon = null;
