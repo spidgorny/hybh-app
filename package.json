@@ -4,7 +4,7 @@
   "description": "Find interesting places nearby",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node tests/test.js",
     "compile": "browserify -t riotify src/app.js -o js/bundle.js",
     "watch": "watchify -t riotify src/app.js -o js/bundle.js -v",
     "dl-sw": "curl https://gist.githubusercontent.com/ithinkihaveacat/227bfe8aa81328c5d64ec48f4e4df8e5/raw/f69f0783e69f5827b20dbe3f3509ddbf73933768/service-worker.d.ts -O typings/service-worker.d.ts",
@@ -13,6 +13,8 @@
   "author": "Slawa",
   "license": "ISC",
   "dependencies": {
+    "expect": "^1.20.2",
+    "js-md5": "^0.4.2",
     "mdbootstrap": "^4.2.0",
     "mt-latlon": "^0.1.1",
     "object-assign": "^4.1.1",

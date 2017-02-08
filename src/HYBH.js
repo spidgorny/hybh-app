@@ -11,10 +11,10 @@ var HYBH = (function () {
             console.warn('Page: hybh');
             riot.mount('#app', 'hybh');
         });
-        r('details/*', function (id) {
-            console.warn('Page: details/' + id);
+        r('details/*', function (app, page, id) {
+            console.warn('Page: details/', app, page, id);
             _this.currentPage = riot.mount('#app', 'details')[0];
-            _this.currentPage.setID(id);
+            _this.currentPage.setID(app);
             //console.log(this.currentPage);
         });
         r('about', function () {
@@ -27,6 +27,7 @@ var HYBH = (function () {
         this.ls = new LocationService_1.default();
         //setInterval(this.periodicUpdater.bind(this), 10000);
         // this.periodicUpdater();
+        $('#start_geocoding').on('click', this.periodicUpdater.bind(this));
     }
     HYBH.prototype.periodicUpdater = function () {
         console.log('10000 milliseconds passed');

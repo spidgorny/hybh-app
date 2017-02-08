@@ -7,7 +7,8 @@ var LocationService = (function () {
     function LocationService() {
         this.latLon = new LatLon(0, 0);
         this.store = require('./storeFactory').default;
-        console.log('store', this.store);
+        console.log('store in LocationService', this.store);
+        console.log('state in LocationService', this.store.getState());
         //this.gmaps = new GMaps();
     }
     LocationService.prototype.start = function () {

@@ -12,7 +12,8 @@ export default class LocationService {
 
 	constructor() {
 		this.store = require('./storeFactory').default;
-		console.log('store', this.store);
+		console.log('store in LocationService', this.store);
+		console.log('state in LocationService', this.store.getState());
 		//this.gmaps = new GMaps();
 	}
 

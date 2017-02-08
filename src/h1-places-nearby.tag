@@ -19,7 +19,7 @@
 //		console.log(store);
 //		console.log(store2);
 //		console.log(store === store2);
-		console.log(store.getState());
+		console.log('state in h1', store.getState());
 
 		this.lat = null;
 		this.lon = null;

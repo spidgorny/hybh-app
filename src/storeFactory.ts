@@ -4,7 +4,10 @@ import ApplicationState from './ApplicationState';
 
 let as = new ApplicationState();
 let normalStore = redux.createStore((state, action) => {
-	return as.manage(state, action);
+	console.warn('redux.createStore', state);
+	state = as.manage(state, action);
+	console.log(state);
+	return state;
 });
 
 export default normalStore;

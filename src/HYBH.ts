@@ -20,10 +20,10 @@ export default class HYBH {
 			console.warn('Page: hybh');
 			riot.mount('#app', 'hybh');
 		});
-		r('details/*',  (id) => {
-			console.warn('Page: details/' + id);
+		r('details/*',  (app, page, id) => {
+			console.warn('Page: details/', app, page, id);
 			this.currentPage = riot.mount('#app', 'details')[0];
-			this.currentPage.setID(id);
+			this.currentPage.setID(app);
 			//console.log(this.currentPage);
 		});
 		r('about',  	() => {
@@ -38,6 +38,8 @@ export default class HYBH {
 		this.ls = new LocationService();
 		//setInterval(this.periodicUpdater.bind(this), 10000);
 		// this.periodicUpdater();
+
+		$('#start_geocoding').on('click', this.periodicUpdater.bind(this));
 	}
 
 	periodicUpdater() {
