@@ -3,6 +3,7 @@
 var assign = Object.assign;
 var md5 = require('js-md5');
 var store = require("store");
+var LatLon = require("mt-latlon");
 var ApplicationState = (function () {
     function ApplicationState() {
         this.initialState = {
@@ -24,6 +25,10 @@ var ApplicationState = (function () {
         }
         else
             switch (action.type) {
+                case 'null':
+                    state = assign({}, state);
+                    state.gps = new LatLon(state.gps._lat, state.gps._lon, state.gps._radius);
+                    break;
                 case '@@redux/INIT':
                     state = assign({}, this.initialState);
                     break;

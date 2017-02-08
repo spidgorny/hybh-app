@@ -6,6 +6,8 @@ const md5 = require('js-md5');
 
 import store = require('store');
 
+import LatLon = require('mt-latlon');
+
 export default class ApplicationState {
 
 	initialState = {
@@ -28,6 +30,10 @@ export default class ApplicationState {
 		if (typeof state == 'undefined') {
 			state = this.initialState;
 		} else switch (action.type) {
+			case 'null':
+				state = assign({}, state);
+				state.gps = new LatLon(state.gps._lat, state.gps._lon, state.gps._radius);
+				break;
 			case '@@redux/INIT':
 				state = assign({}, this.initialState);
 				break;

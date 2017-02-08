@@ -5,7 +5,8 @@
 		<div class="col-md-12">
 			<h1 class="h1-responsive">Places Nearby
 				<small class="text-muted">Location:
-					{ lat || 'unknown' }, { lon || 'unknown' }</small>
+					{ data.lat || 'unknown' },
+					{ data.lon || 'unknown' }</small>
 			</h1>
 		</div>
 	</div>
@@ -21,8 +22,10 @@
 //		console.log(store === store2);
 		console.log('state in h1', store.getState());
 
-		this.lat = null;
-		this.lon = null;
+		this.data = {
+			lat: null,
+			lon: null,
+		};
 
 		//console.log(this);
 
@@ -30,14 +33,22 @@
 			let gps = store.getState().gps;
 			if (gps && gps.lat() != this.lat && gps.lon() != this.lon) {
 				console.log('h1-places-nearby->gps', store.getState());
-				this.lat = gps.lat();
-				this.lon = gps.lon();
+				this.data.lat = gps.lat();
+				this.data.lon = gps.lon();
 				this.update();
 			}
 		});
 
 		this.on('mount', () => {
 			console.log('mounted h1');
+			let state = store.getState();
+			if (state) {
+				let gps = state.gps;
+				this.data.lat = gps.lat();	// should trigger update()
+				this.data.lon = gps.lon();
+				console.log('state copied in mount');
+				this.update();
+			}
 		});
 
 		this.on('unmount', () => {
