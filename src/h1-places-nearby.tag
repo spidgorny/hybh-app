@@ -5,8 +5,8 @@
 		<div class="col-md-12">
 			<h1 class="h1-responsive">Places Nearby
 				<small class="text-muted">Location:
-					{ data.lat || 'unknown' },
-					{ data.lon || 'unknown' }</small>
+					{ data.lat ? data.lat.toFixed(6) : 'unknown' },
+					{ data.lon ? data.lon.toFixed(6) : 'unknown' }</small>
 			</h1>
 		</div>
 	</div>

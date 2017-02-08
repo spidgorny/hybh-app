@@ -50,7 +50,20 @@ export default class LocationService {
 	}
 
 	getWikipediaURL(latLon: LatLon) {
-		return 'https://en.wikipedia.org/w/api.php?action=query&prop=coordinates%7Cpageimages%7Cpageterms%7Cdistance&colimit=50&piprop=thumbnail&pithumbsize=708&pilimit=50&wbptterms=description&generator=geosearch&ggscoord='+latLon.lat()+'%7C'+latLon.lon()+'&ggsradius=1000&ggslimit=50&format=json&origin=*';
+		let radius = this.store.getState().options.radius || 1000;
+		return 'https://en.wikipedia.org/w/api.php?action=query'+
+		'&prop=coordinates%7Cpageimages%7Cpageterms%7Cdistance%7Cinfo%7Cextracts'+
+		'&exintro=1'+
+		'&srprop=titlesnippet'+
+		'&colimit=50&piprop=thumbnail&pithumbsize=708&pilimit=50'+
+		'&wbptterms=description'+
+		'&inprop=url'+
+		'&iwurl=1'+
+		'&list=alllinks'+
+		'&generator=geosearch'+
+		'&ggscoord='+latLon.lat()+'%7C'+latLon.lon()+
+		'&ggsradius='+radius+
+		'&ggslimit=50&format=json&origin=*';
 		//+encodeURIComponent('http://localhost:8081');
 	}
 

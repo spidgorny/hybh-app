@@ -7,7 +7,7 @@ var ApplicationState_1 = require("../src/ApplicationState");
 var as = new ApplicationState_1.default();
 false && expect(as.manage({}, { type: 'null' })).toEqual({
     gps: null,
-    nearbyPlaces: [],
+    placesNearby: [],
     forget: [],
 });
 var store = require('../src/storeFactory').default;
@@ -16,9 +16,18 @@ store.dispatch({
     type: 'forgetPlace',
     pageid: 123,
 });
-expect(store.getState()).toEqual({
+expect(store.getState()).toInclude({
     placesNearby: [],
     gps: null,
     forget: [123]
+});
+var assign = Object.assign;
+var willOverwrite = assign({}, {
+    places: [1, 2, 3],
+}, {
+    places: [4, 5, 6],
+});
+expect(willOverwrite).toEqual({
+    places: [4, 5, 6],
 });
 console.log('OK');

@@ -12,16 +12,24 @@
 		<img src="{ data.thumbnail ? data.thumbnail.source : '' }" class="img-fluid" alt="">
 
 		<p class="card-text">
-			{ data.terms ? data.terms.description : ''}</p>
+			<raw>
+				{ parent.data.extract ? parent.data.extract : ''}
+			</raw>
+		</p>
 
-		<div class="flex-row">
-			<button onclick="{ forget }">Forget</button> - never notify about this place again.<br />
+		<div class="flex-row clearfix">
+			<a href="{ data.canonicalurl || data.fullurl }" class="btn btn-primary">Read more</a>
 
-			<a class="card-link">Another link</a>
+			<div style="float: right">
+				<button onclick="{ forget }">Forget</button> - never notify about this place again.
+			</div>
+
+			<!--<a class="card-link">Another link</a>-->
 		</div>
 	</div>
 
 	<script>
+		const raw = require('./raw.tag');
 
 		this.data = {
 			title: 'temp title',
@@ -47,8 +55,10 @@
 			if (state && 'placesNearby' in state) {
 				let places = state.placesNearby;
 				console.log('update details places', places);
-				this.data = places[id];
-				this.update();
+				if (id in places) {
+					this.data = places[id];
+					this.update();
+				}
 			} else {
 				console.log('state without placesNearby');
 			}
@@ -57,14 +67,18 @@
 		this.on('update', () => {
 			console.log('details.update()', this.data);
 
-			let state = store.getState();
-			let gps = state.gps;
+			if (this.data) {
+				let state = store.getState();
+				let gps = state.gps;
 
-			if (gps) {
-				let coordinates = this.data.coordinates[0];
-				let point = new LatLon(coordinates.lat, coordinates.lon);
-				this.distance = point.distanceTo(gps);
+				if (gps) {
+					let coordinates = this.data.coordinates[0];
+					let point = new LatLon(coordinates.lat, coordinates.lon);
+					this.distance = point.distanceTo(gps);
+				}
 			}
+
+			this.root.querySelector('raw').innerHTML = this.data.extract || '';
 		});
 
 		this.on('unmount', () => {

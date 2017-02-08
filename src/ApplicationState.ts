@@ -8,11 +8,21 @@ import store = require('store');
 
 import LatLon = require('mt-latlon');
 
+declare interface ApplicationStateType {
+	placesNearby: Object[],
+	gps: LatLon;
+	forget: number[];
+}
+
 export default class ApplicationState {
 
 	initialState = {
 		placesNearby: [],
 		gps: null,
+		forget: [],
+		options: {
+			radius: 1000,
+		},
 	};
 
 	constructor() {
@@ -51,6 +61,14 @@ export default class ApplicationState {
 				let forget = state.forget || [];
 				state = assign({}, state, {
 					forget: forget.concat(action.pageid),
+				});
+				break;
+			case 'setRadius':
+				state = assign({}, state, {
+					options: {
+						...state.options,
+						radius: action.radius,
+					}
 				});
 				break;
 			default:

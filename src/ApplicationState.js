@@ -1,5 +1,13 @@
 /// <reference path="../typings/index.d.ts" />
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 var assign = Object.assign;
 var md5 = require('js-md5');
 var store = require("store");
@@ -9,6 +17,10 @@ var ApplicationState = (function () {
         this.initialState = {
             placesNearby: [],
             gps: null,
+            forget: [],
+            options: {
+                radius: 1000,
+            },
         };
         var state = store.get('appState');
         console.log('loaded state', state);
@@ -46,6 +58,11 @@ var ApplicationState = (function () {
                     var forget = state.forget || [];
                     state = assign({}, state, {
                         forget: forget.concat(action.pageid),
+                    });
+                    break;
+                case 'setRadius':
+                    state = assign({}, state, {
+                        options: __assign({}, state.options, { radius: action.radius })
                     });
                     break;
                 default:

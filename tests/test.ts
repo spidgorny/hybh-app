@@ -14,7 +14,7 @@ let as = new ApplicationState();
 
 false && expect(as.manage({}, {type:'null'})).toEqual({
 	gps: null,
-	nearbyPlaces: [],
+	placesNearby: [],
 	forget: [],
 });
 
@@ -26,10 +26,20 @@ store.dispatch({
 	pageid: 123,
 });
 
-expect(store.getState()).toEqual({
+expect(store.getState()).toInclude({
 	placesNearby: [],
 	gps: null,
 	forget: [123]
+});
+
+const assign = Object.assign;
+let willOverwrite = assign({}, {
+	places: [1, 2, 3],
+}, {
+	places: [4, 5, 6],
+});
+expect(willOverwrite).toEqual({
+	places: [4, 5, 6],
 });
 
 console.log('OK');

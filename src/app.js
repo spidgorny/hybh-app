@@ -7,6 +7,7 @@ var h1_places_nearby = require('./h1-places-nearby.tag');
 var panels = require('./panels.tag');
 var card = require('./card.tag');
 var about = require('./about.tag');
+var raw = require('./raw.tag');
 var details = require('./details.tag');
 // console.log(store.getState());
 // store.dispatch({type: 'setGPS', latLon: new LatLon(0, 1)});

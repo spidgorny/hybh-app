@@ -7,6 +7,7 @@ const h1_places_nearby = require('./h1-places-nearby.tag');
 const panels = require('./panels.tag');
 const card = require('./card.tag');
 const about = require('./about.tag');
+const raw = require('./raw.tag');
 const details = require('./details.tag');
 
 // console.log(store.getState());

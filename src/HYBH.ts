@@ -13,38 +13,66 @@ export default class HYBH {
 
 	currentPage: any;
 
+	store;
+
 	constructor() {
 		let r = route.create();
 		r.stop();
 		r('',        	() => {
 			console.warn('Page: hybh');
-			riot.mount('#app', 'hybh');
+			this.currentPage = riot.mount('#app', 'hybh')[0];
 		});
 		r('details/*',  (app, page, id) => {
 			console.warn('Page: details/', app, page, id);
-			this.currentPage = riot.mount('#app', 'details')[0];
+			this.currentPage = riot.mount('#app', 'details', {
+				id: app
+			})[0];
 			this.currentPage.setID(app);
 			//console.log(this.currentPage);
 		});
 		r('about',  	() => {
 			console.warn('Page: about');
-			riot.mount('#app', 'about');
+			this.currentPage = riot.mount('#app', 'about')[0];
 		});
 		route.start(true);
+
+		this.store = require('./storeFactory').default;
 
 		// not needed
 		// this.initializeServiceWorker(this.initialiseState.bind(this));
 
 		this.ls = new LocationService();
-		//setInterval(this.periodicUpdater.bind(this), 10000);
-		// this.periodicUpdater();
+		setInterval(this.periodicUpdater.bind(this), 60 * 1000);
+
+		let state = this.store.getState();
+		let placesNearby = state.placesNearby;
+		console.log(placesNearby);
+		if (!Object.keys(placesNearby).length) {
+			console.error('nothing is in placesNearby. call periodicUpdater');
+			this.periodicUpdater();
+		}
 
 		$('#start_geocoding').on('click', this.periodicUpdater.bind(this));
+		$('#fake_geocoding').on('click', this.fakeGeocoding.bind(this));
 	}
 
 	periodicUpdater() {
 		console.log('10000 milliseconds passed');
-		this.ls.start();
+		console.log(this.currentPage);
+		// this.ls.start();
+	}
+
+	fakeGeocoding() {
+		this.store.dispatch({
+			type: 'setRadius',
+			radius: 100,
+		});
+		this.ls.geolocated({
+			coords: {
+				latitude: 50.449992,
+				longitude: 30.5230968,
+			}
+		});
 	}
 
 	initializeServiceWorker(callback: Function) {
