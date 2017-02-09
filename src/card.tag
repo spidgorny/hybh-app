@@ -42,7 +42,7 @@
 			this.distance = point.distanceTo(this.gps);
 		}
 
-		console.log(this);
+		//console.log(this);
 
 	</script>
 

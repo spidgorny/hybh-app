@@ -1,5 +1,6 @@
 "use strict";
 var LocationService_1 = require("./LocationService");
+var ScrollWatch_1 = require("./ScrollWatch");
 var riot = require('riot');
 var route = require('riot-route');
 var HYBH = (function () {
@@ -9,12 +10,17 @@ var HYBH = (function () {
         r.stop();
         r('', function () {
             console.warn('Page: hybh');
-            _this.currentPage = riot.mount('#app', 'hybh')[0];
+            _this.currentPage = riot.mount('#app', 'hybh', {
+                scrollWatch: _this.scrollWatch
+            })[0];
+            console.log('after riot.mount');
+            _this.currentPage.afterMount();
         });
-        r('details/*', function (app, page, id) {
-            console.warn('Page: details/', app, page, id);
+        r('details/*', function (pageid) {
+            console.warn('Page: details/', pageid);
+            _this.scrollWatch.saveScroll();
             _this.currentPage = riot.mount('#app', 'details', {
-                id: app
+                pageid: pageid,
             })[0];
             _this.currentPage.setID(app);
             //console.log(this.currentPage);
@@ -29,20 +35,28 @@ var HYBH = (function () {
         // this.initializeServiceWorker(this.initialiseState.bind(this));
         this.ls = new LocationService_1.default();
         setInterval(this.periodicUpdater.bind(this), 60 * 1000);
+        setTimeout(function () {
+            _this.getLocationOnStart();
+        }, 1000);
+        $('#start_geocoding').on('click', this.periodicUpdater.bind(this));
+        $('#fake_geocoding').on('click', this.fakeGeocoding.bind(this));
+        this.scrollWatch = new ScrollWatch_1.default(route);
+        // required even though we restore manually
+        //this.scrollWatch.start();
+    }
+    HYBH.prototype.getLocationOnStart = function () {
         var state = this.store.getState();
         var placesNearby = state.placesNearby;
-        console.log(placesNearby);
-        if (!Object.keys(placesNearby).length) {
+        //console.log('placesNearby', placesNearby);
+        if (!placesNearby || !Object.keys(placesNearby).length) {
             console.error('nothing is in placesNearby. call periodicUpdater');
             this.periodicUpdater();
         }
-        $('#start_geocoding').on('click', this.periodicUpdater.bind(this));
-        $('#fake_geocoding').on('click', this.fakeGeocoding.bind(this));
-    }
+    };
     HYBH.prototype.periodicUpdater = function () {
-        console.log('10000 milliseconds passed');
-        console.log(this.currentPage);
-        if (this.currentPage.type && this.currentPage.type == 'hybh') {
+        //console.log('10000 milliseconds passed');
+        //console.log('currentPage', this.currentPage);
+        if (this.currentPage && this.currentPage.type && this.currentPage.type == 'hybh') {
             this.ls.start();
         }
     };

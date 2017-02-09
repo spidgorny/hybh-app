@@ -4,7 +4,7 @@
 	</span>
 
 	<script>
-		console.log('raw', this);
+		//console.log('raw', this);
 		this.root.innerHTML = opts.content;
 	</script>
 </raw>

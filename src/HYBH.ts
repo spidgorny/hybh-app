@@ -1,4 +1,5 @@
 import LocationService from "./LocationService";
+import ScrollWatch from "./ScrollWatch";
 const riot = require('riot');
 const route = require('riot-route');
 
@@ -15,17 +16,25 @@ export default class HYBH {
 
 	store;
 
+	scrollWatch;
+
 	constructor() {
 		let r = route.create();
 		r.stop();
 		r('',        	() => {
 			console.warn('Page: hybh');
-			this.currentPage = riot.mount('#app', 'hybh')[0];
+			this.currentPage = riot.mount('#app', 'hybh', {
+				scrollWatch: this.scrollWatch
+			})[0];
+			console.log('after riot.mount');
+			this.currentPage.afterMount();
 		});
-		r('details/*',  (app, page, id) => {
-			console.warn('Page: details/', app, page, id);
+		r('details/*',  (pageid) => {
+			console.warn('Page: details/', pageid);
+			this.scrollWatch.saveScroll();
+
 			this.currentPage = riot.mount('#app', 'details', {
-				id: app
+				pageid: pageid,
 			})[0];
 			this.currentPage.setID(app);
 			//console.log(this.currentPage);
@@ -44,22 +53,32 @@ export default class HYBH {
 		this.ls = new LocationService();
 		setInterval(this.periodicUpdater.bind(this), 60 * 1000);
 
-		let state = this.store.getState();
-		let placesNearby = state.placesNearby;
-		console.log(placesNearby);
-		if (!Object.keys(placesNearby).length) {
-			console.error('nothing is in placesNearby. call periodicUpdater');
-			this.periodicUpdater();
-		}
+		setTimeout(() => {
+			this.getLocationOnStart();
+		}, 1000);
 
 		$('#start_geocoding').on('click', this.periodicUpdater.bind(this));
 		$('#fake_geocoding').on('click', this.fakeGeocoding.bind(this));
+
+		this.scrollWatch = new ScrollWatch(route);
+		// required even though we restore manually
+		//this.scrollWatch.start();
+	}
+
+	getLocationOnStart() {
+		let state = this.store.getState();
+		let placesNearby = state.placesNearby;
+		//console.log('placesNearby', placesNearby);
+		if (!placesNearby || !Object.keys(placesNearby).length) {
+			console.error('nothing is in placesNearby. call periodicUpdater');
+			this.periodicUpdater();
+		}
 	}
 
 	periodicUpdater() {
-		console.log('10000 milliseconds passed');
-		console.log(this.currentPage);
-		if (this.currentPage.type && this.currentPage.type == 'hybh') {
+		//console.log('10000 milliseconds passed');
+		//console.log('currentPage', this.currentPage);
+		if (this.currentPage && this.currentPage.type && this.currentPage.type == 'hybh') {
 			this.ls.start();
 		}
 	}

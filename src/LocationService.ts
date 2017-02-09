@@ -13,8 +13,8 @@ export default class LocationService {
 
 	constructor() {
 		this.store = require('./storeFactory').default;
-		console.log('store in LocationService', this.store);
-		console.log('state in LocationService', this.store.getState());
+		// console.log('store in LocationService', this.store);
+		// console.log('state in LocationService', this.store.getState());
 		//this.gmaps = new GMaps();
 	}
 
@@ -41,9 +41,10 @@ export default class LocationService {
 				latLon: newLatLon,
 			});
 
-			let wikipediaURL = this.getWikipediaURL(newLatLon);
+			let radius = this.store.getState().options.radius || 1000;
+			let wikipediaURL = this.getWikipediaURL(newLatLon, radius);
 			//console.log(wikipediaURL);
-			this.fetchJSON(wikipediaURL);
+			this.fetchJSON(wikipediaURL, radius);
 
 			this.latLon = newLatLon;
 		} else {
@@ -51,10 +52,10 @@ export default class LocationService {
 		}
 	}
 
-	getWikipediaURL(latLon: LatLon) {
-		let radius = this.store.getState().options.radius || 1000;
+	getWikipediaURL(latLon: LatLon, radius = 1000) {
+		let radius = this.store.getState().options.radius || radius;
 		return 'https://en.wikipedia.org/w/api.php?action=query'+
-		'&prop=coordinates%7Cpageimages%7Cpageterms%7Cdistance%7Cinfo%7Cextracts'+
+		'&prop=coordinates%7Cpageimages%7Cpageterms%7Cinfo%7Cextracts'+
 		'&exintro=1'+
 		'&srprop=titlesnippet'+
 		'&colimit=50&piprop=thumbnail&pithumbsize=708&pilimit=50'+
@@ -69,7 +70,7 @@ export default class LocationService {
 		//+encodeURIComponent('http://localhost:8081');
 	}
 
-	fetchJSON(url) {
+	fetchJSON(url, radius) {
 		fetch(url, {
 //				mode: 'no-cors',
 			cache: 'force-cache',
@@ -85,10 +86,17 @@ export default class LocationService {
 				return JSON.parse(text);
 			})
 			.then(json => {
-				this.store.dispatch({
-					type: 'setPlaces',
-					places: json.query.pages,
-				});
+				// let radius = this.store.getState().options.radius;
+				if (json.query && json.query.pages) {
+					this.store.dispatch({
+						type: 'setPlaces',
+						places: json.query.pages,
+					});
+				} else if (radius < 1000) {
+					// call again with a wider range
+					let wikipediaURL = this.getWikipediaURL(this.latLon, 1000);
+					this.fetchJSON(wikipediaURL, 1000);
+				}
 			})
 			.catch(err => {
 				console.log(err);

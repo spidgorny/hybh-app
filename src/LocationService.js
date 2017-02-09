@@ -8,8 +8,8 @@ var LocationService = (function () {
     function LocationService() {
         this.latLon = new LatLon(0, 0);
         this.store = require('./storeFactory').default;
-        console.log('store in LocationService', this.store);
-        console.log('state in LocationService', this.store.getState());
+        // console.log('store in LocationService', this.store);
+        // console.log('state in LocationService', this.store.getState());
         //this.gmaps = new GMaps();
     }
     LocationService.prototype.start = function () {
@@ -31,19 +31,21 @@ var LocationService = (function () {
                 type: 'setGPS',
                 latLon: newLatLon,
             });
-            var wikipediaURL = this.getWikipediaURL(newLatLon);
+            var radius = this.store.getState().options.radius || 1000;
+            var wikipediaURL = this.getWikipediaURL(newLatLon, radius);
             //console.log(wikipediaURL);
-            this.fetchJSON(wikipediaURL);
+            this.fetchJSON(wikipediaURL, radius);
             this.latLon = newLatLon;
         }
         else {
             console.log('lat lon is the same');
         }
     };
-    LocationService.prototype.getWikipediaURL = function (latLon) {
-        var radius = this.store.getState().options.radius || 1000;
+    LocationService.prototype.getWikipediaURL = function (latLon, radius) {
+        if (radius === void 0) { radius = 1000; }
+        var radius = this.store.getState().options.radius || radius;
         return 'https://en.wikipedia.org/w/api.php?action=query' +
-            '&prop=coordinates%7Cpageimages%7Cpageterms%7Cdistance%7Cinfo%7Cextracts' +
+            '&prop=coordinates%7Cpageimages%7Cpageterms%7Cinfo%7Cextracts' +
             '&exintro=1' +
             '&srprop=titlesnippet' +
             '&colimit=50&piprop=thumbnail&pithumbsize=708&pilimit=50' +
@@ -57,7 +59,7 @@ var LocationService = (function () {
             '&ggslimit=50&format=json&origin=*';
         //+encodeURIComponent('http://localhost:8081');
     };
-    LocationService.prototype.fetchJSON = function (url) {
+    LocationService.prototype.fetchJSON = function (url, radius) {
         var _this = this;
         fetch(url, {
             //				mode: 'no-cors',
@@ -72,10 +74,18 @@ var LocationService = (function () {
             return JSON.parse(text);
         })
             .then(function (json) {
-            _this.store.dispatch({
-                type: 'setPlaces',
-                places: json.query.pages,
-            });
+            // let radius = this.store.getState().options.radius;
+            if (json.query && json.query.pages) {
+                _this.store.dispatch({
+                    type: 'setPlaces',
+                    places: json.query.pages,
+                });
+            }
+            else if (radius < 1000) {
+                // call again with a wider range
+                var wikipediaURL = _this.getWikipediaURL(_this.latLon, 1000);
+                _this.fetchJSON(wikipediaURL, 1000);
+            }
         })
             .catch(function (err) {
             console.log(err);

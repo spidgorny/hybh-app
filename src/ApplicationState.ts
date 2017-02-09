@@ -27,7 +27,7 @@ export default class ApplicationState {
 
 	constructor() {
 		let state = store.get('appState');
-		console.log('loaded state', state);
+		//console.log('loaded state', state);
 		if (state && state != {}) {
 			this.initialState = this.manage(state, {type: 'null'});
 		} else {

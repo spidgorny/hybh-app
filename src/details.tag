@@ -21,7 +21,17 @@
 			<a href="{ data.canonicalurl || data.fullurl }" class="btn btn-primary">Read more</a>
 
 			<div style="float: right">
-				<button onclick="{ forget }">Forget</button> - never notify about this place again.
+				<div class="btn-group">
+					<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<i class="fa fa-ellipsis-v"></i>
+					</button>
+
+					<div class="dropdown-menu dropdown-menu-right">
+						<a class="dropdown-item { data.isForgotten ? 'disabled' : '' }" onclick="{ forget }">
+							Forget - never notify about this place again.
+						</a>
+					</div>
+				</div>
 			</div>
 
 			<!--<a class="card-link">Another link</a>-->
@@ -37,38 +47,38 @@
 		this.distance = null;
 
 		const LatLon = require('mt-latlon');
-		const store = require('./storeFactory').default;
-		console.log('store in details', store);
-		console.log('state in details', store.getState());
+		this.store = require('./storeFactory').default;
+//		console.log('store in details', this.store);
+//		console.log('state in details', this.store.getState());
 
 		this.on('mount', () => {
-			console.log('mount details', this);
+			//console.log('mount details', this);
 		});
 
 		this.setID = (id) => {
 //			this.opts.id = id;
 //			this.opts.some = 'shit';
-			console.log('setID(', id, ')', this.opts);
-			let state = store.getState();
+			//console.log('setID(', id, ')', this.opts);
+			let state = this.store.getState();
 
-			console.log('state from store', state);
+			//console.log('state from store', state);
 			if (state && 'placesNearby' in state) {
 				let places = state.placesNearby;
-				console.log('update details places', places);
+//				console.log('update details places', places);
 				if (id in places) {
 					this.data = places[id];
 					this.update();
 				}
 			} else {
-				console.log('state without placesNearby');
+				console.warn('state without placesNearby');
 			}
 		};
 
 		this.on('update', () => {
-			console.log('details.update()', this.data);
+//			console.log('details.update()', this.data);
 
 			if (this.data) {
-				let state = store.getState();
+				let state = this.store.getState();
 				let gps = state.gps;
 
 				if (gps) {
@@ -79,19 +89,28 @@
 			}
 
 			this.root.querySelector('raw').innerHTML = this.data.extract || '';
+			this.data.isForgotten = this.isForgotten();
 		});
 
 		this.on('unmount', () => {
 		});
 
 		this.forget = (e) => {
-			console.log('forget', this.data.pageid);
-			console.log(e.target);
-			store.dispatch({
+//			console.log('forget', this.data.pageid);
+//			console.log(e.target);
+			this.store.dispatch({
 				type: 'forgetPlace',
 				pageid: this.data.pageid,
 			});
-		}
+		};
+
+		this.isForgotten = () => {
+//			console.log('isForgotten', this.data.pageid);
+			let state = this.store.getState();
+			let indexOf = state.forget.indexOf(this.data.pageid);
+//			console.log(indexOf, state.forget);
+			return -1 !== indexOf;
+		};
 
 	</script>
 

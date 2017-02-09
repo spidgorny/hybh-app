@@ -20,7 +20,7 @@
 //		console.log(store);
 //		console.log(store2);
 //		console.log(store === store2);
-		console.log('state in h1', store.getState());
+		//console.log('state in h1', store.getState());
 
 		this.data = {
 			lat: null,
@@ -34,7 +34,7 @@
 			if (gps &&
 				gps.lat() !== this.lat &&
 				gps.lon() !== this.lon) {
-				console.log('h1-places-nearby->gps', store.getState());
+				//console.log('h1-places-nearby->gps', store.getState());
 				this.data.lat = gps.lat();
 				this.data.lon = gps.lon();
 				this.update();
@@ -42,14 +42,14 @@
 		});
 
 		this.on('mount', () => {
-			console.log('mounted h1');
+			//console.log('mounted h1');
 			let state = store.getState();
 			if (state) {
 				let gps = state.gps;
 				if (gps) {
 					this.data.lat = gps.lat();	// should trigger update()
 					this.data.lon = gps.lon();
-					console.log('state copied in mount');
+					//console.log('state copied in mount');
 					this.update();
 				}
 			}

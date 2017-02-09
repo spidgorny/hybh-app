@@ -33,24 +33,24 @@
 				return -1 !== forget.indexOf(el.pageid);
 			});
 			this.panels = pages;
-			console.log('updatePanels', this.panels);
+			//console.log('updatePanels', this.panels);
 			this.update();
 		};
 
 		const unsubscribe = store.subscribe(() => {
 			let places = store.getState().placesNearby;
 			if (places && places != this.panels) {
-				console.log('panels->places', store.getState());
+				//console.log('panels->places', store.getState());
 				this.panels = places;
 				this.gps = store.getState().gps;
-				console.log(this.gps);
+				//console.log(this.gps);
 				this.update();
 			}
 		});
 
 		this.on('mount', () => {
 			let state = store.getState();
-			console.log('panels.mount', state);
+			//console.log('panels.mount', state);
 			this.gps = state.gps;
 			this.updatePanels(state.placesNearby);
 		});

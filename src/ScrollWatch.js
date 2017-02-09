@@ -3,16 +3,32 @@
  */
 "use strict";
 var ScrollWatch = (function () {
-    function ScrollWatch() {
-        var _this = this;
+    function ScrollWatch(route) {
         this.history = [];
-        document.addEventListener('beforeunload', function () {
-            _this.saveScroll();
-        });
-        document.addEventListener('popstate', function () {
-            _this.restoreScroll();
-        });
+        this.route = route;
     }
+    /**
+     * we can not distinguish route going back so we don't use
+     * automatic saving and restoring.
+     * @deprecated
+     */
+    ScrollWatch.prototype.start = function () {
+        // not called because it's SPA
+        document.addEventListener('beforeunload', function () {
+            // this.saveScroll();
+        });
+        this.route(function (p1, p2, p3) {
+            console.log(p1, p2, p3);
+            //this.saveScroll();
+        });
+        // this runs too early
+        window.addEventListener('popstate', function () {
+            // this runs too soon, but we will call it manually in mount
+            //setTimeout(() => {
+            //	this.restoreScroll();
+            //}, 10);	// to allow route to mount
+        });
+    };
     ScrollWatch.prototype.saveScroll = function () {
         this.history.push(window.scrollY);
         console.log('saveScroll', this.history);
