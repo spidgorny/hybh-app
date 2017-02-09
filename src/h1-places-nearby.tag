@@ -31,7 +31,9 @@
 
 		const unsubscribe = store.subscribe(() => {
 			let gps = store.getState().gps;
-			if (gps && gps.lat() != this.lat && gps.lon() != this.lon) {
+			if (gps &&
+				gps.lat() !== this.lat &&
+				gps.lon() !== this.lon) {
 				console.log('h1-places-nearby->gps', store.getState());
 				this.data.lat = gps.lat();
 				this.data.lon = gps.lon();
@@ -44,10 +46,12 @@
 			let state = store.getState();
 			if (state) {
 				let gps = state.gps;
-				this.data.lat = gps.lat();	// should trigger update()
-				this.data.lon = gps.lon();
-				console.log('state copied in mount');
-				this.update();
+				if (gps) {
+					this.data.lat = gps.lat();	// should trigger update()
+					this.data.lon = gps.lon();
+					console.log('state copied in mount');
+					this.update();
+				}
 			}
 		});
 
