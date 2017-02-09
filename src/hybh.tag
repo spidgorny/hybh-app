@@ -6,6 +6,6 @@
 	<panels ref="panels"></panels>
 
 	<script>
-
+		this.type = 'hybh';
 	</script>
 </hybh>

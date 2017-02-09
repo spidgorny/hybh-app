@@ -59,7 +59,9 @@ export default class HYBH {
 	periodicUpdater() {
 		console.log('10000 milliseconds passed');
 		console.log(this.currentPage);
-		// this.ls.start();
+		if (this.currentPage.type && this.currentPage.type == 'hybh') {
+			this.ls.start();
+		}
 	}
 
 	fakeGeocoding() {
