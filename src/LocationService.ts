@@ -1,6 +1,7 @@
 import GMaps from "./GMaps.geolocate";
 //import {LatLon} from 'mt-latlon';
 import LatLon = require('mt-latlon');
+import jQuery = require('jquery');
 
 export default class LocationService {
 
@@ -22,6 +23,7 @@ export default class LocationService {
 		GMaps.geolocate({
 			success: this.geolocated.bind(this),
 			not_supported: this.geoError.bind(this),
+			error: this.geoError.bind(this),
 		});
 	}
 
@@ -93,8 +95,20 @@ export default class LocationService {
 			});
 	}
 
-	geoError() {
-		console.log('geolocation is not supported');
+	geoError(errorMessage) {
+		console.error(errorMessage);
+		jQuery.getJSON("http://ipinfo.io", (ipinfo) => {
+			console.log("Found location ["+ipinfo.loc+"] by ipinfo.io");
+			let latLong = ipinfo.loc.split(",");
+			if (latLong) {
+				this.geolocated({
+					coords: {
+						latitude: latLong[0],
+						longitude: latLong[1],
+					}
+				});
+			}
+		});
 	}
 
 }

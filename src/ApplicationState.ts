@@ -42,7 +42,9 @@ export default class ApplicationState {
 		} else switch (action.type) {
 			case 'null':
 				state = assign({}, state);
-				state.gps = new LatLon(state.gps._lat, state.gps._lon, state.gps._radius);
+				if (state.gps) {
+					state.gps = new LatLon(state.gps._lat, state.gps._lon, state.gps._radius);
+				}
 				break;
 			case '@@redux/INIT':
 				state = assign({}, this.initialState);

@@ -2,6 +2,7 @@
 var GMaps_geolocate_1 = require("./GMaps.geolocate");
 //import {LatLon} from 'mt-latlon';
 var LatLon = require("mt-latlon");
+var jQuery = require("jquery");
 var LocationService = (function () {
     //gmaps: GMaps;
     function LocationService() {
@@ -16,6 +17,7 @@ var LocationService = (function () {
         GMaps_geolocate_1.default.geolocate({
             success: this.geolocated.bind(this),
             not_supported: this.geoError.bind(this),
+            error: this.geoError.bind(this),
         });
     };
     LocationService.prototype.geolocated = function (pos) {
@@ -79,8 +81,21 @@ var LocationService = (function () {
             console.log(err);
         });
     };
-    LocationService.prototype.geoError = function () {
-        console.log('geolocation is not supported');
+    LocationService.prototype.geoError = function (errorMessage) {
+        var _this = this;
+        console.error(errorMessage);
+        jQuery.getJSON("http://ipinfo.io", function (ipinfo) {
+            console.log("Found location [" + ipinfo.loc + "] by ipinfo.io");
+            var latLong = ipinfo.loc.split(",");
+            if (latLong) {
+                _this.geolocated({
+                    coords: {
+                        latitude: latLong[0],
+                        longitude: latLong[1],
+                    }
+                });
+            }
+        });
     };
     return LocationService;
 }());

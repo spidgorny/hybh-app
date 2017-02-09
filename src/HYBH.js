@@ -42,7 +42,7 @@ var HYBH = (function () {
     HYBH.prototype.periodicUpdater = function () {
         console.log('10000 milliseconds passed');
         console.log(this.currentPage);
-        // this.ls.start();
+        this.ls.start();
     };
     HYBH.prototype.fakeGeocoding = function () {
         this.store.dispatch({
