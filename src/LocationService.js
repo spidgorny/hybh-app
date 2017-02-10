@@ -13,33 +13,50 @@ var LocationService = (function () {
         //this.gmaps = new GMaps();
     }
     LocationService.prototype.start = function () {
+        var _this = this;
         console.log('start geolocation');
-        GMaps_geolocate_1.default.geolocate({
-            success: this.geolocated.bind(this),
-            not_supported: this.geoError.bind(this),
-            error: this.geoError.bind(this),
+        return new Promise(function (resolve, reject) {
+            GMaps_geolocate_1.default.geolocate({
+                success: function (pos) {
+                    var promise = _this.geolocated(pos);
+                    resolve(promise);
+                },
+                not_supported: function (err) {
+                    _this.geoError(err);
+                    reject(err);
+                },
+                error: function (err) {
+                    _this.geoError(err);
+                    reject(err);
+                },
+            });
         });
     };
     LocationService.prototype.geolocated = function (pos) {
-        console.log(pos);
-        //			this.lat = pos.coords.latitude;
-        //			this.lon = pos.coords.longitude;
-        var newLatLon = new LatLon(pos.coords.latitude, pos.coords.longitude);
-        if (this.latLon.lat() != newLatLon.lat() ||
-            this.latLon.lon() != newLatLon.lon()) {
-            this.store.dispatch({
-                type: 'setGPS',
-                latLon: newLatLon,
-            });
-            var radius = this.store.getState().options.radius || 1000;
-            var wikipediaURL = this.getWikipediaURL(newLatLon, radius);
-            //console.log(wikipediaURL);
-            this.fetchJSON(wikipediaURL, radius);
-            this.latLon = newLatLon;
-        }
-        else {
-            console.log('lat lon is the same');
-        }
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            console.log(pos);
+            //			this.lat = pos.coords.latitude;
+            //			this.lon = pos.coords.longitude;
+            var newLatLon = new LatLon(pos.coords.latitude, pos.coords.longitude);
+            if (_this.latLon.lat() != newLatLon.lat() ||
+                _this.latLon.lon() != newLatLon.lon()) {
+                _this.store.dispatch({
+                    type: 'setGPS',
+                    latLon: newLatLon,
+                });
+                _this.latLon = newLatLon;
+                var radius = _this.store.getState().options.radius || 1000;
+                var wikipediaURL = _this.getWikipediaURL(newLatLon, radius);
+                //console.log(wikipediaURL);
+                var promise = _this.fetchJSON(wikipediaURL, radius);
+                resolve(promise);
+            }
+            else {
+                console.log('lat lon is the same');
+                reject('lat lon is the same');
+            }
+        });
     };
     LocationService.prototype.getWikipediaURL = function (latLon, radius) {
         if (radius === void 0) { radius = 1000; }
@@ -47,7 +64,7 @@ var LocationService = (function () {
         return 'https://en.wikipedia.org/w/api.php?action=query' +
             '&prop=coordinates%7Cpageimages%7Cpageterms%7Cinfo%7Cextracts' +
             '&exintro=1' +
-            '&srprop=titlesnippet' +
+            // '&srprop=titlesnippet'+
             '&colimit=50&piprop=thumbnail&pithumbsize=708&pilimit=50' +
             '&wbptterms=description' +
             '&inprop=url' +
@@ -61,34 +78,44 @@ var LocationService = (function () {
     };
     LocationService.prototype.fetchJSON = function (url, radius) {
         var _this = this;
-        fetch(url, {
-            //				mode: 'no-cors',
-            cache: 'force-cache',
-            headers: {},
-        })
-            .then(function (response) {
-            return response.text();
-            //				return response.json();
-        })
-            .then(function (text) {
-            return JSON.parse(text);
-        })
-            .then(function (json) {
-            // let radius = this.store.getState().options.radius;
-            if (json.query && json.query.pages) {
-                _this.store.dispatch({
-                    type: 'setPlaces',
-                    places: json.query.pages,
-                });
-            }
-            else if (radius < 1000) {
-                // call again with a wider range
-                var wikipediaURL = _this.getWikipediaURL(_this.latLon, 1000);
-                _this.fetchJSON(wikipediaURL, 1000);
-            }
-        })
-            .catch(function (err) {
-            console.log(err);
+        return new Promise(function (resolve, reject) {
+            fetch(url, {
+                //				mode: 'no-cors',
+                cache: 'force-cache',
+                headers: {},
+            })
+                .then(function (response) {
+                return response.text();
+                //				return response.json();
+            })
+                .then(function (text) {
+                return JSON.parse(text);
+            })
+                .then(function (json) {
+                // let radius = this.store.getState().options.radius;
+                console.log('json', json);
+                if (json.query && json.query.pages) {
+                    _this.store.dispatch({
+                        type: 'setPlaces',
+                        places: json.query.pages,
+                    });
+                    console.log('resolve', json.query.pages);
+                    resolve(json.query.pages);
+                }
+                else if (radius < 1000) {
+                    // call again with a wider range
+                    var wikipediaURL = _this.getWikipediaURL(_this.latLon, 1000);
+                    return _this.fetchJSON(wikipediaURL, 1000);
+                }
+                else {
+                    console.log('wikipedia has no results for ', _this.latLon.toString('d'));
+                    reject('wikipedia has no results for ' + _this.latLon.toString('d'));
+                }
+            })
+                .catch(function (err) {
+                console.log(err);
+                reject(err);
+            });
         });
     };
     LocationService.prototype.geoError = function (errorMessage) {

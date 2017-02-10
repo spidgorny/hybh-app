@@ -70,7 +70,7 @@ export default class ServiceWorker {
 
 	notify() {
 		self.registration.showNotification(this.title, {
-			body: 'We found some interesting places nearby Want to see details?',
+			body: 'We found some interesting places nearby. Want to see details?',
 			icon: 'img/map_blue.png',
 			vibrate: [200, 100, 200, 100, 200, 100, 400],
 			tag: 'request',
