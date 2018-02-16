@@ -1,9 +1,10 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var LocationService_1 = require("./LocationService");
 var ScrollWatch_1 = require("./ScrollWatch");
 var riot = require('riot');
 var route = require('riot-route');
-var HYBH = (function () {
+var HYBH = /** @class */ (function () {
     function HYBH() {
         var _this = this;
         var r = route.create();
@@ -149,5 +150,4 @@ var HYBH = (function () {
     };
     return HYBH;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = HYBH;

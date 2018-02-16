@@ -1,11 +1,12 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var LocationService_1 = require("./LocationService");
 /**
  * This was implemented in order to watch user's location
  * even when the browser is closed. Since SW navigator object
  * does not support GL - we don't need SW.
  */
-var ServiceWorker = (function () {
+var ServiceWorker = /** @class */ (function () {
     /**
      * Self is a special SW context
      * @param self
@@ -39,7 +40,7 @@ var ServiceWorker = (function () {
             _this.notify();
             event.waitUntil(function () {
                 // Process the event and display a notification.
-                //this.notify();
+                _this.notify();
             });
         });
         self.addEventListener('notificationclick', function (event) {
@@ -58,7 +59,7 @@ var ServiceWorker = (function () {
             icon: 'img/map_blue.png',
             vibrate: [200, 100, 200, 100, 200, 100, 400],
             tag: 'request',
-            _actions: [
+            actions: [
                 { action: 'yes', title: 'Yes!', icon: 'images/thumb-up.png' },
                 { action: 'no', title: 'No', icon: 'images/thumb-down.png' }
             ]
@@ -103,5 +104,4 @@ var ServiceWorker = (function () {
     };
     return ServiceWorker;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ServiceWorker;

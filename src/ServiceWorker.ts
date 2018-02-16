@@ -52,7 +52,7 @@ export default class ServiceWorker {
 			this.notify();
 			event.waitUntil(() => {
 				// Process the event and display a notification.
-				//this.notify();
+				this.notify();
 			});
 		});
 
@@ -74,7 +74,7 @@ export default class ServiceWorker {
 			icon: 'img/map_blue.png',
 			vibrate: [200, 100, 200, 100, 200, 100, 400],
 			tag: 'request',
-			_actions: [
+			actions: [
 				{action: 'yes', title: 'Yes!', icon: 'images/thumb-up.png'},
 				{action: 'no', title: 'No', icon: 'images/thumb-down.png'}
 			]

@@ -33616,8 +33616,8 @@ function isnan (val) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"base64-js":15,"ieee754":88,"isarray":92}],161:[function(require,module,exports){
-/// <reference path="../typings/index.d.ts" />
 "use strict";
+/// <reference path="../typings/index.d.ts" />
 
 var __assign = undefined && undefined.__assign || Object.assign || function (t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -33628,11 +33628,12 @@ var __assign = undefined && undefined.__assign || Object.assign || function (t) 
     }
     return t;
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var assign = Object.assign;
 var md5 = require('js-md5');
 var store = require("store");
 var LatLon = require("mt-latlon");
-var ApplicationState = function () {
+var ApplicationState = /** @class */function () {
     function ApplicationState() {
         this.initialState = {
             placesNearby: [],
@@ -33646,7 +33647,9 @@ var ApplicationState = function () {
         //console.log('loaded state', state);
         if (state && state != {}) {
             this.initialState = this.manage(state, { type: 'null' });
-        } else {}
+        } else {
+            //this.initialState = this.initialState;
+        }
     }
     ApplicationState.prototype.manage = function (state, action) {
         console.warn('ApplicationState.manage', action);
@@ -33701,16 +33704,16 @@ var ApplicationState = function () {
     };
     return ApplicationState;
 }();
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ApplicationState;
 
 },{"js-md5":94,"mt-latlon":108,"store":152}],162:[function(require,module,exports){
+"use strict";
 // copy/paste from
 // https://github.com/hpneo/gmaps/blob/master/lib/gmaps.utils.js
 // because npm module is not ready
-"use strict";
 
-var GMaps = function () {
+Object.defineProperty(exports, "__esModule", { value: true });
+var GMaps = /** @class */function () {
     function GMaps() {}
     GMaps.geolocate = function (options) {
         var complete_callback = options.always || options.complete;
@@ -33735,17 +33738,21 @@ var GMaps = function () {
     };
     return GMaps;
 }();
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = GMaps;
 
 },{}],163:[function(require,module,exports){
 "use strict";
 
+Object.defineProperty(exports, "__esModule", { value: true });
 var GMaps_geolocate_1 = require("./GMaps.geolocate");
 //import {LatLon} from 'mt-latlon';
 var LatLon = require("mt-latlon");
 var jQuery = require("jquery");
-var LocationService = function () {
+var $ = require("jquery");
+console.log('jQuery', Object.keys(jQuery));
+console.log('$', Object.keys($));
+console.log('$', $);
+var LocationService = /** @class */function () {
     //gmaps: GMaps;
     function LocationService() {
         this.latLon = new LatLon(0, 0);
@@ -33802,7 +33809,7 @@ var LocationService = function () {
         if (radius === void 0) {
             radius = 1000;
         }
-        var radius = this.store.getState().options.radius || radius;
+        radius = this.store.getState().options.radius || radius;
         return 'https://en.wikipedia.org/w/api.php?action=query' + '&prop=coordinates%7Cpageimages%7Cpageterms%7Cinfo%7Cextracts' + '&exintro=1' +
         // '&srprop=titlesnippet'+
         '&colimit=50&piprop=thumbnail&pithumbsize=708&pilimit=50' + '&wbptterms=description' + '&inprop=url' + '&iwurl=1' + '&list=alllinks' + '&generator=geosearch' + '&ggscoord=' + latLon.lat() + '%7C' + latLon.lon() + '&ggsradius=' + radius + '&ggslimit=50&format=json&origin=*';
@@ -33839,7 +33846,7 @@ var LocationService = function () {
                     reject('wikipedia has no results for ' + _this.latLon.toString('d'));
                 }
             }).catch(function (err) {
-                console.log(err);
+                console.error('catch on fetch wiki', err);
                 reject(err);
             });
         });
@@ -33847,7 +33854,13 @@ var LocationService = function () {
     LocationService.prototype.geoError = function (errorMessage) {
         var _this = this;
         console.error(errorMessage);
-        jQuery.getJSON("http://ipinfo.io", function (ipinfo) {
+        fetch("http://ipinfo.io/json").then(function (response) {
+            return response.text();
+            //				return response.json();
+        }).then(function (text) {
+            return JSON.parse(text);
+        }).then(function (ipinfo) {
+            console.log('ipinfo', ipinfo);
             console.log("Found location [" + ipinfo.loc + "] by ipinfo.io");
             var latLong = ipinfo.loc.split(",");
             if (latLong) {
@@ -33858,23 +33871,25 @@ var LocationService = function () {
                     }
                 });
             }
+        }).catch(function (error) {
+            console.error('catch on fetch ipinfo.io', error);
         });
     };
     return LocationService;
 }();
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = LocationService;
 
 },{"./GMaps.geolocate":162,"./storeFactory":165,"jquery":93,"mt-latlon":108}],164:[function(require,module,exports){
 "use strict";
 
+Object.defineProperty(exports, "__esModule", { value: true });
 var LocationService_1 = require("./LocationService");
 /**
  * This was implemented in order to watch user's location
  * even when the browser is closed. Since SW navigator object
  * does not support GL - we don't need SW.
  */
-var ServiceWorker = function () {
+var ServiceWorker = /** @class */function () {
     /**
      * Self is a special SW context
      * @param self
@@ -33907,7 +33922,7 @@ var ServiceWorker = function () {
             _this.notify();
             event.waitUntil(function () {
                 // Process the event and display a notification.
-                //this.notify();
+                _this.notify();
             });
         });
         self.addEventListener('notificationclick', function (event) {
@@ -33926,7 +33941,7 @@ var ServiceWorker = function () {
             icon: 'img/map_blue.png',
             vibrate: [200, 100, 200, 100, 200, 100, 400],
             tag: 'request',
-            _actions: [{ action: 'yes', title: 'Yes!', icon: 'images/thumb-up.png' }, { action: 'no', title: 'No', icon: 'images/thumb-down.png' }]
+            actions: [{ action: 'yes', title: 'Yes!', icon: 'images/thumb-up.png' }, { action: 'no', title: 'No', icon: 'images/thumb-down.png' }]
         });
     };
     ServiceWorker.prototype.cacheAllFetch = function (event) {
@@ -33966,12 +33981,12 @@ var ServiceWorker = function () {
     };
     return ServiceWorker;
 }();
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ServiceWorker;
 
 },{"./LocationService":163}],165:[function(require,module,exports){
 "use strict";
 
+Object.defineProperty(exports, "__esModule", { value: true });
 var redux = require('redux');
 var ApplicationState_1 = require("./ApplicationState");
 var as = new ApplicationState_1.default();
@@ -33981,15 +33996,15 @@ var normalStore = redux.createStore(function (state, action) {
     //console.log(state);
     return state;
 });
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = normalStore;
 
 },{"./ApplicationState":161,"redux":141}],166:[function(require,module,exports){
+"use strict";
 /// <reference path="typings/index.d.ts" />
 /// <reference path="typings/service-worker.d.ts" />
 // https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
-"use strict";
 
+Object.defineProperty(exports, "__esModule", { value: true });
 var ServiceWorker_1 = require("./src/ServiceWorker");
 var sw = new ServiceWorker_1.default(self);
 

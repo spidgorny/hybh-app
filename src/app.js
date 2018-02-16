@@ -1,6 +1,7 @@
+"use strict";
 /// <reference path="../typings/index.d.ts" />
 /// <reference path="../node_modules/redux/index.d.ts" />
-"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var HYBH_1 = require("./HYBH");
 var hybh = require('./hybh.tag');
 var h1_places_nearby = require('./h1-places-nearby.tag');

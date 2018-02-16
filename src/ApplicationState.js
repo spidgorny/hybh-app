@@ -1,5 +1,5 @@
-/// <reference path="../typings/index.d.ts" />
 "use strict";
+/// <reference path="../typings/index.d.ts" />
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -8,11 +8,12 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var assign = Object.assign;
 var md5 = require('js-md5');
 var store = require("store");
 var LatLon = require("mt-latlon");
-var ApplicationState = (function () {
+var ApplicationState = /** @class */ (function () {
     function ApplicationState() {
         this.initialState = {
             placesNearby: [],
@@ -28,6 +29,7 @@ var ApplicationState = (function () {
             this.initialState = this.manage(state, { type: 'null' });
         }
         else {
+            //this.initialState = this.initialState;
         }
     }
     ApplicationState.prototype.manage = function (state, action) {
@@ -85,5 +87,4 @@ var ApplicationState = (function () {
     };
     return ApplicationState;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ApplicationState;

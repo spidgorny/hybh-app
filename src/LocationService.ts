@@ -2,12 +2,17 @@ import GMaps from "./GMaps.geolocate";
 //import {LatLon} from 'mt-latlon';
 import LatLon = require('mt-latlon');
 import jQuery = require('jquery');
+import * as $ from 'jquery';
+import ApplicationState from "./ApplicationState";
+console.log('jQuery', Object.keys(jQuery));
+console.log('$', Object.keys($));
+console.log('$', $);
 
 export default class LocationService {
 
 	latLon: LatLon = new LatLon(0, 0);
 
-	store;
+	store: ApplicationState;
 
 	//gmaps: GMaps;
 
@@ -67,7 +72,7 @@ export default class LocationService {
 	}
 
 	getWikipediaURL(latLon: LatLon, radius = 1000) {
-		let radius = this.store.getState().options.radius || radius;
+		radius = this.store.getState().options.radius || radius;
 		return 'https://en.wikipedia.org/w/api.php?action=query'+
 		'&prop=coordinates%7Cpageimages%7Cpageterms%7Cinfo%7Cextracts'+
 		'&exintro=1'+
@@ -120,7 +125,7 @@ export default class LocationService {
 					}
 				})
 				.catch(err => {
-					console.log(err);
+					console.error('catch on fetch wiki', err);
 					reject(err);
 				});
 		});
@@ -128,18 +133,30 @@ export default class LocationService {
 
 	geoError(errorMessage) {
 		console.error(errorMessage);
-		jQuery.getJSON("http://ipinfo.io", (ipinfo) => {
-			console.log("Found location ["+ipinfo.loc+"] by ipinfo.io");
-			let latLong = ipinfo.loc.split(",");
-			if (latLong) {
-				this.geolocated({
-					coords: {
-						latitude: latLong[0],
-						longitude: latLong[1],
-					}
-				});
-			}
-		});
+		fetch("http://ipinfo.io/json")
+			.then(response => {
+				return response.text();
+				//				return response.json();
+			})
+			.then(text => {
+				return JSON.parse(text);
+			})
+			.then((ipinfo: any) => {
+				console.log('ipinfo', ipinfo);
+				console.log("Found location ["+ipinfo.loc+"] by ipinfo.io");
+				let latLong = ipinfo.loc.split(",");
+				if (latLong) {
+					this.geolocated({
+						coords: {
+							latitude: latLong[0],
+							longitude: latLong[1],
+						}
+					});
+				}
+			})
+			.catch(error => {
+				console.error('catch on fetch ipinfo.io', error);
+			});
 	}
 
 }

@@ -1,9 +1,14 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var GMaps_geolocate_1 = require("./GMaps.geolocate");
 //import {LatLon} from 'mt-latlon';
 var LatLon = require("mt-latlon");
 var jQuery = require("jquery");
-var LocationService = (function () {
+var $ = require("jquery");
+console.log('jQuery', Object.keys(jQuery));
+console.log('$', Object.keys($));
+console.log('$', $);
+var LocationService = /** @class */ (function () {
     //gmaps: GMaps;
     function LocationService() {
         this.latLon = new LatLon(0, 0);
@@ -60,7 +65,7 @@ var LocationService = (function () {
     };
     LocationService.prototype.getWikipediaURL = function (latLon, radius) {
         if (radius === void 0) { radius = 1000; }
-        var radius = this.store.getState().options.radius || radius;
+        radius = this.store.getState().options.radius || radius;
         return 'https://en.wikipedia.org/w/api.php?action=query' +
             '&prop=coordinates%7Cpageimages%7Cpageterms%7Cinfo%7Cextracts' +
             '&exintro=1' +
@@ -113,7 +118,7 @@ var LocationService = (function () {
                 }
             })
                 .catch(function (err) {
-                console.log(err);
+                console.error('catch on fetch wiki', err);
                 reject(err);
             });
         });
@@ -121,7 +126,16 @@ var LocationService = (function () {
     LocationService.prototype.geoError = function (errorMessage) {
         var _this = this;
         console.error(errorMessage);
-        jQuery.getJSON("http://ipinfo.io", function (ipinfo) {
+        fetch("http://ipinfo.io/json")
+            .then(function (response) {
+            return response.text();
+            //				return response.json();
+        })
+            .then(function (text) {
+            return JSON.parse(text);
+        })
+            .then(function (ipinfo) {
+            console.log('ipinfo', ipinfo);
             console.log("Found location [" + ipinfo.loc + "] by ipinfo.io");
             var latLong = ipinfo.loc.split(",");
             if (latLong) {
@@ -132,9 +146,11 @@ var LocationService = (function () {
                     }
                 });
             }
+        })
+            .catch(function (error) {
+            console.error('catch on fetch ipinfo.io', error);
         });
     };
     return LocationService;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = LocationService;

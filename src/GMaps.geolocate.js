@@ -1,8 +1,9 @@
+"use strict";
 // copy/paste from
 // https://github.com/hpneo/gmaps/blob/master/lib/gmaps.utils.js
 // because npm module is not ready
-"use strict";
-var GMaps = (function () {
+Object.defineProperty(exports, "__esModule", { value: true });
+var GMaps = /** @class */ (function () {
     function GMaps() {
     }
     GMaps.geolocate = function (options) {
@@ -29,5 +30,4 @@ var GMaps = (function () {
     };
     return GMaps;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = GMaps;

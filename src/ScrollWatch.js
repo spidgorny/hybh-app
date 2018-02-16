@@ -1,8 +1,9 @@
+"use strict";
 /**
  * Created by DEPIDSVY on 09.02.2017.
  */
-"use strict";
-var ScrollWatch = (function () {
+Object.defineProperty(exports, "__esModule", { value: true });
+var ScrollWatch = /** @class */ (function () {
     function ScrollWatch(route) {
         this.history = [];
         this.route = route;
@@ -42,5 +43,4 @@ var ScrollWatch = (function () {
     };
     return ScrollWatch;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ScrollWatch;
