@@ -15,7 +15,10 @@ var ServiceWorker = /** @class */ (function () {
         var _this = this;
         this.title = 'Have you been here?';
         this.CACHE_NAME = 'my-site-cache-v1';
-        this.urlsToCache = [];
+        this.urlsToCache = [
+        // 'index.html',
+        // 'js/bundle.js',
+        ];
         console.log('service worker constructor');
         self.addEventListener('install', function (event) {
             // Perform install steps

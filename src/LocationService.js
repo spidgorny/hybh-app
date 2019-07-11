@@ -87,7 +87,9 @@ var LocationService = /** @class */ (function () {
             fetch(url, {
                 //				mode: 'no-cors',
                 cache: 'force-cache',
-                headers: {},
+                headers: {
+                //					'Origin': 'http://localhost:8081'
+                },
             })
                 .then(function (response) {
                 return response.text();
