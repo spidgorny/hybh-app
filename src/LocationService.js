@@ -1,60 +1,58 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var GMaps_geolocate_1 = require("./GMaps.geolocate");
+const GMaps_geolocate_1 = require("./GMaps.geolocate");
 //import {LatLon} from 'mt-latlon';
-var LatLon = require("mt-latlon");
-var jQuery = require("jquery");
-var $ = require("jquery");
+const LatLon = require("mt-latlon");
+const jQuery = require("jquery");
+const $ = require("jquery");
 console.log('jQuery', Object.keys(jQuery));
 console.log('$', Object.keys($));
 console.log('$', $);
-var LocationService = /** @class */ (function () {
+class LocationService {
     //gmaps: GMaps;
-    function LocationService() {
+    constructor() {
         this.latLon = new LatLon(0, 0);
         this.store = require('./storeFactory').default;
         // console.log('store in LocationService', this.store);
         // console.log('state in LocationService', this.store.getState());
         //this.gmaps = new GMaps();
     }
-    LocationService.prototype.start = function () {
-        var _this = this;
+    start() {
         console.log('start geolocation');
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             GMaps_geolocate_1.default.geolocate({
-                success: function (pos) {
-                    var promise = _this.geolocated(pos);
+                success: (pos) => {
+                    let promise = this.geolocated(pos);
                     resolve(promise);
                 },
-                not_supported: function (err) {
-                    _this.geoError(err);
+                not_supported: (err) => {
+                    this.geoError(err);
                     reject(err);
                 },
-                error: function (err) {
-                    _this.geoError(err);
+                error: (err) => {
+                    this.geoError(err);
                     reject(err);
                 },
             });
         });
-    };
-    LocationService.prototype.geolocated = function (pos) {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
+    }
+    geolocated(pos) {
+        return new Promise((resolve, reject) => {
             console.log(pos);
             //			this.lat = pos.coords.latitude;
             //			this.lon = pos.coords.longitude;
-            var newLatLon = new LatLon(pos.coords.latitude, pos.coords.longitude);
-            if (_this.latLon.lat() != newLatLon.lat() ||
-                _this.latLon.lon() != newLatLon.lon()) {
-                _this.store.dispatch({
+            const newLatLon = new LatLon(pos.coords.latitude, pos.coords.longitude);
+            if (this.latLon.lat() != newLatLon.lat() ||
+                this.latLon.lon() != newLatLon.lon()) {
+                this.store.dispatch({
                     type: 'setGPS',
                     latLon: newLatLon,
                 });
-                _this.latLon = newLatLon;
-                var radius = _this.store.getState().options.radius || 1000;
-                var wikipediaURL = _this.getWikipediaURL(newLatLon, radius);
+                this.latLon = newLatLon;
+                let radius = this.store.getState().options.radius || 1000;
+                let wikipediaURL = this.getWikipediaURL(newLatLon, radius);
                 //console.log(wikipediaURL);
-                var promise = _this.fetchJSON(wikipediaURL, radius);
+                let promise = this.fetchJSON(wikipediaURL, radius);
                 resolve(promise);
             }
             else {
@@ -62,9 +60,8 @@ var LocationService = /** @class */ (function () {
                 reject('lat lon is the same');
             }
         });
-    };
-    LocationService.prototype.getWikipediaURL = function (latLon, radius) {
-        if (radius === void 0) { radius = 1000; }
+    }
+    getWikipediaURL(latLon, radius = 1000) {
         radius = this.store.getState().options.radius || radius;
         return 'https://en.wikipedia.org/w/api.php?action=query' +
             '&prop=coordinates%7Cpageimages%7Cpageterms%7Cinfo%7Cextracts' +
@@ -80,10 +77,9 @@ var LocationService = /** @class */ (function () {
             '&ggsradius=' + radius +
             '&ggslimit=50&format=json&origin=*';
         //+encodeURIComponent('http://localhost:8081');
-    };
-    LocationService.prototype.fetchJSON = function (url, radius) {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
+    }
+    fetchJSON(url, radius) {
+        return new Promise((resolve, reject) => {
             fetch(url, {
                 //				mode: 'no-cors',
                 cache: 'force-cache',
@@ -91,18 +87,18 @@ var LocationService = /** @class */ (function () {
                 //					'Origin': 'http://localhost:8081'
                 },
             })
-                .then(function (response) {
+                .then(response => {
                 return response.text();
                 //				return response.json();
             })
-                .then(function (text) {
+                .then(text => {
                 return JSON.parse(text);
             })
-                .then(function (json) {
+                .then(json => {
                 // let radius = this.store.getState().options.radius;
                 console.log('json', json);
                 if (json.query && json.query.pages) {
-                    _this.store.dispatch({
+                    this.store.dispatch({
                         type: 'setPlaces',
                         places: json.query.pages,
                     });
@@ -111,37 +107,36 @@ var LocationService = /** @class */ (function () {
                 }
                 else if (radius < 1000) {
                     // call again with a wider range
-                    var wikipediaURL = _this.getWikipediaURL(_this.latLon, 1000);
-                    return _this.fetchJSON(wikipediaURL, 1000);
+                    let wikipediaURL = this.getWikipediaURL(this.latLon, 1000);
+                    return this.fetchJSON(wikipediaURL, 1000);
                 }
                 else {
-                    console.log('wikipedia has no results for ', _this.latLon.toString('d'));
-                    reject('wikipedia has no results for ' + _this.latLon.toString('d'));
+                    console.log('wikipedia has no results for ', this.latLon.toString('d'));
+                    reject('wikipedia has no results for ' + this.latLon.toString('d'));
                 }
             })
-                .catch(function (err) {
+                .catch(err => {
                 console.error('catch on fetch wiki', err);
                 reject(err);
             });
         });
-    };
-    LocationService.prototype.geoError = function (errorMessage) {
-        var _this = this;
+    }
+    geoError(errorMessage) {
         console.error(errorMessage);
         fetch("http://ipinfo.io/json")
-            .then(function (response) {
+            .then(response => {
             return response.text();
             //				return response.json();
         })
-            .then(function (text) {
+            .then(text => {
             return JSON.parse(text);
         })
-            .then(function (ipinfo) {
+            .then((ipinfo) => {
             console.log('ipinfo', ipinfo);
             console.log("Found location [" + ipinfo.loc + "] by ipinfo.io");
-            var latLong = ipinfo.loc.split(",");
+            let latLong = ipinfo.loc.split(",");
             if (latLong) {
-                _this.geolocated({
+                this.geolocated({
                     coords: {
                         latitude: latLong[0],
                         longitude: latLong[1],
@@ -149,10 +144,9 @@ var LocationService = /** @class */ (function () {
                 });
             }
         })
-            .catch(function (error) {
+            .catch(error => {
             console.error('catch on fetch ipinfo.io', error);
         });
-    };
-    return LocationService;
-}());
+    }
+}
 exports.default = LocationService;

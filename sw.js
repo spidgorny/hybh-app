@@ -3,5 +3,5 @@
 /// <reference path="typings/service-worker.d.ts" />
 // https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
 Object.defineProperty(exports, "__esModule", { value: true });
-var ServiceWorker_1 = require("./src/ServiceWorker");
-var sw = new ServiceWorker_1.default(self);
+const ServiceWorker_1 = require("./src/ServiceWorker");
+const sw = new ServiceWorker_1.default(self);

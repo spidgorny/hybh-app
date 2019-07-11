@@ -3,10 +3,8 @@
 // https://github.com/hpneo/gmaps/blob/master/lib/gmaps.utils.js
 // because npm module is not ready
 Object.defineProperty(exports, "__esModule", { value: true });
-var GMaps = /** @class */ (function () {
-    function GMaps() {
-    }
-    GMaps.geolocate = function (options) {
+class GMaps {
+    static geolocate(options) {
         var complete_callback = options.always || options.complete;
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
@@ -27,7 +25,6 @@ var GMaps = /** @class */ (function () {
                 complete_callback();
             }
         }
-    };
-    return GMaps;
-}());
+    }
+}
 exports.default = GMaps;

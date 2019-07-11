@@ -1,23 +1,12 @@
 "use strict";
 /// <reference path="../typings/index.d.ts" />
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var assign = Object.assign;
-var md5 = require('js-md5');
-var store = require("store");
-var LatLon = require("mt-latlon");
-var ApplicationState = /** @class */ (function () {
-    function ApplicationState() {
+const assign = Object.assign;
+const md5 = require('js-md5');
+const store = require("store");
+const LatLon = require("mt-latlon");
+class ApplicationState {
+    constructor() {
         this.initialState = {
             placesNearby: [],
             gps: null,
@@ -26,7 +15,7 @@ var ApplicationState = /** @class */ (function () {
                 radius: 1000,
             },
         };
-        var state = store.get('appState');
+        let state = store.get('appState');
         //console.log('loaded state', state);
         if (state && state != {}) {
             this.initialState = this.manage(state, { type: 'null' });
@@ -35,7 +24,7 @@ var ApplicationState = /** @class */ (function () {
             //this.initialState = this.initialState;
         }
     }
-    ApplicationState.prototype.manage = function (state, action) {
+    manage(state, action) {
         console.warn('ApplicationState.manage', action);
         if (typeof state == 'undefined') {
             state = this.initialState;
@@ -62,14 +51,17 @@ var ApplicationState = /** @class */ (function () {
                     });
                     break;
                 case 'forgetPlace':
-                    var forget = state.forget || [];
+                    let forget = state.forget || [];
                     state = assign({}, state, {
                         forget: forget.concat(action.pageid),
                     });
                     break;
                 case 'setRadius':
                     state = assign({}, state, {
-                        options: __assign({}, state.options, { radius: action.radius })
+                        options: {
+                            ...state.options,
+                            radius: action.radius,
+                        }
                     });
                     break;
                 default:
@@ -78,16 +70,15 @@ var ApplicationState = /** @class */ (function () {
             }
         this.saveState(state);
         return state;
-    };
-    ApplicationState.prototype.saveState = function (state) {
+    }
+    saveState(state) {
         if (state) {
-            var stateHash = JSON.stringify(state);
+            let stateHash = JSON.stringify(state);
             if (stateHash != '{}') {
                 console.log('saving state to appState', md5(stateHash));
                 store.set('appState', state);
             }
         }
-    };
-    return ApplicationState;
-}());
+    }
+}
 exports.default = ApplicationState;
